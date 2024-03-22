@@ -2,10 +2,24 @@ import React, { useState, useEffect } from "react";
 
 const LiveMatches = ({ competitionId }) => {
   const [matches, setMatches] = useState([]);
+  const [previousMatches, setPreviousMatches] = useState([]);
 
   useEffect(() => {
     fetchLiveMatches();
   }, [competitionId]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchLiveMatches();
+    }, 30000); // Fetch the latest matches every 30 seconds
+
+    return () => clearInterval(interval); // Cleanup function to clear the interval
+  }, []);
+
+  useEffect(() => {
+    // Compare current matches with previous matches to detect score changes
+    checkScoreChanges();
+  }, [matches]);
 
   const fetchLiveMatches = async () => {
     try {
@@ -13,20 +27,43 @@ const LiveMatches = ({ competitionId }) => {
         "https://livescore-api.com/api-client/matches/live.json?key=4zf7CwnLuhwoT6yn&secret=LzTmINL1TEtqxooBXDIAa6mFoS4hZCFL";
       if (competitionId) {
         url += `&competition_id=${competitionId}`;
-        console.log(`fetching:${url}`);
       }
       const response = await fetch(url);
       const data = await response.json();
+      setPreviousMatches(matches); // Update previous matches before setting new ones
       setMatches(data.data.match);
-      console.log("get response matches:");
-      console.log(data.data.match);
     } catch (error) {
       console.error("Error fetching live matches:", error);
     }
   };
 
+  const checkScoreChanges = () => {
+    if (matches.length === 0 || previousMatches.length === 0) return;
+
+    // Compare current matches with previous matches
+    matches.forEach((match, index) => {
+      const previousMatch = previousMatches[index];
+      if (previousMatch && match.scores.score !== previousMatch.scores.score) {
+        console.log(
+          `Score changed for match ${match.id}: ${match.scores.score}`
+        );
+        // Score has changed, apply visual indicator and tooltip
+        const scoreElement = document.getElementById(`score-${match.id}`);
+        if (scoreElement) {
+          scoreElement.classList.add("score-changed"); // Add CSS class for light yellow background
+          scoreElement.setAttribute("title", "Score just changed"); // Add tooltip text
+          setTimeout(() => {
+            scoreElement.classList.remove("score-changed");
+            scoreElement.removeAttribute("title");
+          }, 60000); // Remove CSS class after 1 minute
+        }
+      }
+    });
+  };
+
   return (
     <div className="px-12 py-4 border rounded-lg shadow-md bg-slate-100">
+      {/* Render a message if there are no matches */}
       {matches.length === 0 ? (
         <p className="text-3xl text-gray-500">No match right now</p>
       ) : (
@@ -39,7 +76,8 @@ const LiveMatches = ({ competitionId }) => {
                     <span className="text-blue-500">{match.home.name}</span> vs{" "}
                     <span className="text-red-500">{match.away.name}</span>
                   </h3>
-                  <p className="text-xl text-gray-500">
+                  {/* Display the match scores */}
+                  <p id={`score-${match.id}`} className="text-xl text-gray-500">
                     <span className="text-blue-500">
                       {match.scores.score.split("-")[0]}
                     </span>{" "}
@@ -49,9 +87,6 @@ const LiveMatches = ({ competitionId }) => {
                     </span>
                   </p>
                 </div>
-                {/* <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
-              Details
-            </button> */}
               </div>
             </li>
           ))}

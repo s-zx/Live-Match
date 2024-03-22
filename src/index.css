@@ -42,3 +42,8 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.score-changed {
+  background-color: #ffffcc; /* Light yellow background */
+  text-align: center; /* Center text horizontally */
+}

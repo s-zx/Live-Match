@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const LiveMatches = ({ competitionId }) => {
+const LiveMatches = ({ competitionId, onGoalScored }) => {
   const [matches, setMatches] = useState([]);
   const [previousMatches, setPreviousMatches] = useState([]);
 
@@ -32,6 +32,7 @@ const LiveMatches = ({ competitionId }) => {
       const data = await response.json();
       setPreviousMatches(matches); // Update previous matches before setting new ones
       setMatches(data.data.match);
+      // console.log("Live matches:", data.data.match);
     } catch (error) {
       console.error("Error fetching live matches:", error);
     }
@@ -44,10 +45,12 @@ const LiveMatches = ({ competitionId }) => {
     matches.forEach((match, index) => {
       const previousMatch = previousMatches[index];
       if (previousMatch && match.scores.score !== previousMatch.scores.score) {
+        previousMatch.scores.score = match.scores.score; // Update previous match scores
+        setPreviousMatches([...previousMatches]); // Create a new reference to trigger re-render
         console.log(
           `Score changed for match ${match.id}: ${match.scores.score}`
         );
-        // Score has changed, apply visual indicator and tooltip
+        // Score has changed, apply visual indicator
         const scoreElement = document.getElementById(`score-${match.id}`);
         if (scoreElement) {
           scoreElement.classList.add("score-changed"); // Add CSS class for light yellow background
@@ -57,6 +60,7 @@ const LiveMatches = ({ competitionId }) => {
             scoreElement.removeAttribute("title");
           }, 60000); // Remove CSS class after 1 minute
         }
+        onGoalScored(); // Notify parent component
       }
     });
   };

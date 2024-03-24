@@ -47,3 +47,18 @@ button:focus-visible {
   background-color: #ffffcc; /* Light yellow background */
   text-align: center; /* Center text horizontally */
 }
+
+.animate-goal {
+  animation-name: goalAnimation;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes goalAnimation {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100vw);
+  }
+}

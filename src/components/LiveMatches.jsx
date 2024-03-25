@@ -81,10 +81,7 @@ const LiveMatches = ({ competitionId, onGoalScored }) => {
                     <span className="text-red-500">{match.away.name}</span>
                   </h3>
                   {/* Display the match scores */}
-                  <p
-                    id={`score-${match.id}`}
-                    className="text-xl text-gray-500 score-changed"
-                  >
+                  <p id={`score-${match.id}`} className="text-xl text-gray-500">
                     <span className="text-blue-500">
                       {match.scores.score.split("-")[0]}
                     </span>{" "}

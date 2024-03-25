@@ -4,7 +4,7 @@ import LiveMatches from "./components/LiveMatches.jsx";
 
 const App = () => {
   const [selectedCompetition, setSelectedCompetition] = useState("");
-  const [goalScored, setGoalScored] = useState(true);
+  const [goalScored, setGoalScored] = useState(false);
 
   const handleCompetitionSelect = (competitionId) => {
     setSelectedCompetition(competitionId);

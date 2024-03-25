@@ -50,7 +50,7 @@ button:focus-visible {
 
 .animate-goal {
   animation-name: goalAnimation;
-  animation-duration: 2s;
+  animation-duration: 10s;
   animation-fill-mode: forwards;
 }
 

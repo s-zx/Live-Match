@@ -29,12 +29,11 @@ const App = () => {
           />
         )}
       </div>
-      <div className="flex flex-row justify-evenly">
-        <div className="">
+      <div className="flex flex-col sm:flex-row justify-evenly">
+        <div className="mb-4">
           <CompetitionFilter onSelect={handleCompetitionSelect} />
         </div>
         <LiveMatches
-          className=""
           competitionId={selectedCompetition}
           onGoalScored={handleGoalScored}
         />

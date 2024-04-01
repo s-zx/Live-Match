@@ -31,7 +31,7 @@ const LiveMatches = ({ competitionId, onGoalScored }) => {
       const response = await fetch(url);
       const data = await response.json();
       setPreviousMatches(matches); // Update previous matches before setting new ones
-      setMatches(data.data.match);
+      setMatches(data?.data?.match || []);
       // console.log("Live matches:", data.data.match);
     } catch (error) {
       console.error("Error fetching live matches:", error);
@@ -46,7 +46,7 @@ const LiveMatches = ({ competitionId, onGoalScored }) => {
       const previousMatch = previousMatches[index];
       if (previousMatch && match.scores.score !== previousMatch.scores.score) {
         previousMatch.scores.score = match.scores.score; // Update previous match scores
-        setPreviousMatches([...previousMatches]); // Create a new reference to trigger re-render
+        setPreviousMatches([...previousMatches]);
         console.log(
           `Score changed for match ${match.id}: ${match.scores.score}`
         );
